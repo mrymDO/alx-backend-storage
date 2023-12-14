@@ -19,7 +19,7 @@ BEGIN
         WHERE name = project_name;
 
         -- If the project does not exist, create it
-        SELECT COUNT(*) INTO project_count FROM projects
+        SELECT COUNT(id) INTO project_count FROM projects
 	WHERE name = project_name;
 	IF project_count = 0 THEN
             INSERT INTO projects (name) VALUES (project_name);
