@@ -22,9 +22,9 @@ def nginx_logs_stats(mongo_collection):
 
 
     count_status_requests = mongo_collection.count_documents({"method": "GET", "path": "/status"})
-    print(f"\t{count_status_requests} status check")
+    print(f"{count_status_requests} status check")
 
-    client.close()
+
 
 if __name__ == "__main__":
     client = MongoClient('mongodb://127.0.0.1:27017')
