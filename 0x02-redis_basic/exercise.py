@@ -41,6 +41,21 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
+def replay(method: Callable, cache):
+    """Display the history of calls for a particular function"""
+    method_name = method.__qualname__
+    input_list_key = f"{method_name}:inputs"
+    output_list_key = f"{method_name}:outputs"
+
+    input_history = cache._redis.lrange(input_list_key, 0,  -1)
+    output_history = cache._redis.lrange(output_list_key, 0, -1)
+
+    print(f"{method_name} was called {len(input_history)} times:")
+
+    for inputs, output in zip(input_history, output_history):
+        print(f"{method_name}(*{inputs.decode('utf-8')} -> {output.decode('utf-8')}")
+
+
 
 class Cache:
     """store instance od Redis"""
@@ -74,3 +89,18 @@ class Cache:
     def get_int(self, key: str) -> int:
         """retrieve data as an integer from the cache"""
         return self.get(key, int)
+
+
+
+
+
+# Example Usage:
+cache = Cache()
+
+# Perform some store operations to generate history
+cache.store("foo")
+cache.store("bar")
+cache.store(42)
+
+# Call the replay function for the store method
+replay(cache.store, cache)
