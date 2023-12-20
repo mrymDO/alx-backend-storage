@@ -7,7 +7,6 @@ from typing import Union, Callable, Optional
 from functools import wraps
 
 
-
 def count_calls(method: Callable) -> Callable:
     """Decorator to count how many times a method is called"""
 
@@ -24,7 +23,6 @@ def count_calls(method: Callable) -> Callable:
 
 def call_history(method: Callable) -> Callable:
     """Decorator to store history of inputs and outputs of a function"""
-    
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         input_list_key = f"{method.__qualname__}:inputs"
@@ -53,8 +51,8 @@ def replay(method: Callable, cache):
     print(f"{method_name} was called {len(input_history)} times:")
 
     for inputs, output in zip(input_history, output_history):
-        print(f"{method_name}(*{inputs.decode('utf-8')} -> {output.decode('utf-8')}")
-
+        print(f"{method_name}(*{inputs.decode('utf-8')})"
+              f" -> {output.decode('utf-8')}")
 
 
 class Cache:
@@ -74,7 +72,8 @@ class Cache:
 
         return key
 
-    def get(self, key: str, fn: Optional[Callable] = None) -> Union[str, bytes, int, float]:
+    def get(self, key: str,
+            fn: Optional[Callable] = None) -> Union[str, bytes, int, float]:
         """retrieve data from the cache based on a key"""
         data = self._redis.get(key)
 
@@ -89,18 +88,3 @@ class Cache:
     def get_int(self, key: str) -> int:
         """retrieve data as an integer from the cache"""
         return self.get(key, int)
-
-
-
-
-
-# Example Usage:
-cache = Cache()
-
-# Perform some store operations to generate history
-cache.store("foo")
-cache.store("bar")
-cache.store(42)
-
-# Call the replay function for the store method
-replay(cache.store, cache)
